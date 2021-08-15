@@ -9,7 +9,7 @@ const recurrenceRates = {
     MONTHLY: "1 month"
 }
 
-const TransactionEditor = ({transaction}) => {
+const TransactionEditor = ({dateRange, transaction}) => {
     const TRANSACTION_TYPE = "expense";
     const [show,setShow] = useState(false);
 
@@ -90,7 +90,7 @@ const TransactionEditor = ({transaction}) => {
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Payment Date</Form.Label>
-                            <Form.Control name="date" type="date" value={getDateString(date)} onChange={(event) => setDate(new Date(`${event.target.value}T07:00:00.000Z`)) } />
+                            <Form.Control name="date" type="date" min={getDateString(dateRange.start)} max={getDateString(dateRange.end)} value={getDateString(date)} onChange={(event) => setDate(new Date(`${event.target.value}T07:00:00.000Z`)) } />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Recurrence Rate</Form.Label>

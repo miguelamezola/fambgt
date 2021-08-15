@@ -5,10 +5,10 @@ import TransactionEditor from '../TransactionEditor/TransactionEditor';
 
 import { v4 as uuidv4 } from 'uuid';
 
-
 const BudgetMaker = () => {
     const LEN_BUDGET_PERIOD_IN_DAYS = 14;
 
+    const [dateRange,setDateRange] = useState({});
     const [budgetPeriods,setBudgetPeriods] = useState([]);
 
     useEffect(() => {
@@ -65,6 +65,13 @@ const BudgetMaker = () => {
             });
 
             setBudgetPeriods(periods);
+
+            const range = {
+                start: firstStart,
+                end: secondEnd
+            }
+
+            setDateRange(range);
         });
     },[]);
 
@@ -73,7 +80,7 @@ const BudgetMaker = () => {
             <div className="row budget-maker-header">
                 <h1>Budget Maker</h1>                
                 <div>
-                    <TransactionEditor />
+                    <TransactionEditor dateRange={dateRange} />
                 </div>
             </div>
             <div className="row">
