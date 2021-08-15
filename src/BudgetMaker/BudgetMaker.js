@@ -1,8 +1,7 @@
 import './BudgetMaker.css';
 import React, { useEffect, useState } from 'react';
 import BudgetPeriod from '../BudgetPeriod/BudgetPeriod';
-import IncomeForm from '../IncomeForm/IncomeForm';
-import ExpenseForm from '../ExpenseForm/ExpenseForm';
+import TransactionEditor from '../TransactionEditor/TransactionEditor';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -69,29 +68,12 @@ const BudgetMaker = () => {
         });
     },[]);
 
-    const onAddOrUpdateIncome = (transaction) => {
-        console.log(transaction);
-        // budgetItems.transactions.push(transaction);
-        // setBudgetItems(budgetItems);
-        // const modifiedBudgetPeriods = getBudgetPeriods(budgetItems,budgetPeriodStartDates,LEN_BUDGET_PERIOD_IN_DAYS); 
-        // setBudgetPeriods(modifiedBudgetPeriods);
-        // console.log(modifiedBudgetPeriods);
-        // for(let i = 0; i < budgetPeriods.length; i++) {
-        //     console.log(budgetPeriods[i]);
-        //     if (budgetPeriods[i].start <= transaction.date && transaction.date <= budgetPeriods[i].end) {
-        //         budgetPeriods[i].transactions.push(transaction);
-        //         break;
-        //     }
-        // }
-    }
-
     return (
         <div className="container">
             <div className="row budget-maker-header">
                 <h1>Budget Maker</h1>                
                 <div>
-                    <IncomeForm onAddOrUpdate={onAddOrUpdateIncome} />
-                    <ExpenseForm onAddOrUpdate={onAddOrUpdateIncome} />
+                    <TransactionEditor />
                 </div>
             </div>
             <div className="row">

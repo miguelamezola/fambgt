@@ -3,7 +3,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 
 import { v4 as uuidv4 } from 'uuid';
 
-const ExpenseForm = ({onAddOrUpdate, data}) => {
+const TransactionEditor = ({transaction}) => {
     const TRANSACTION_TYPE = "expense";
     const [show,setShow] = useState(false);
 
@@ -18,12 +18,12 @@ const ExpenseForm = ({onAddOrUpdate, data}) => {
     // const [dueDate,setDueDate] = useState(DEFAULT_DATE);
 
     const onOpen = () => {
-        if (data) {
-            setId(data.id);
-            setTitle(data.title);
-            setAmount(data.amount);
-            setDate(data.date);
-            setRecurrenceRate(data.recurrenceRate);
+        if (transaction) {
+            setId(transaction.id);
+            setTitle(transaction.title);
+            setAmount(transaction.amount);
+            setDate(transaction.date);
+            setRecurrenceRate(transaction.recurrenceRate);
         } else {
             setTitle('');
             setAmount('');
@@ -42,14 +42,14 @@ const ExpenseForm = ({onAddOrUpdate, data}) => {
             uuid = uuidv4();
             setId(uuid);
         }
-        onAddOrUpdate({
-            id: uuid,
-            type: TRANSACTION_TYPE,
-            title: title,
-            amount: amount,
-            date: date,
-            recurrenceRate: recurrenceRate
-        });
+        // onAddOrUpdate({
+        //     id: uuid,
+        //     type: TRANSACTION_TYPE,
+        //     title: title,
+        //     amount: amount,
+        //     date: date,
+        //     recurrenceRate: recurrenceRate
+        // });
         setShow(false);
     }
 
@@ -62,14 +62,14 @@ const ExpenseForm = ({onAddOrUpdate, data}) => {
     }
 
     const isValid = () => title.length > 0 && amount > 0;
-    const isDirty = () => !data || data.id !== id || data.title !== title || data.amount !== amount || data.date !== date || data.recurrenceRate !== recurrenceRate;
+    const isDirty = () => !transaction || transaction.id !== id || transaction.title !== title || transaction.amount !== amount || transaction.date !== date || transaction.recurrenceRate !== recurrenceRate;
 
     return (
         <>
-            <button type="button" className="btn btn-primary btn-sm" onClick={ onOpen }>Expense Income</button>
+            <button type="button" className="btn btn-primary btn-sm" onClick={ onOpen }>Add Transaction</button>
             <Modal show={ show } onHide={ onClose } centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Expense Form</Modal.Title>
+                    <Modal.Title>Transaction</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
@@ -120,4 +120,4 @@ const getDateString = (date) => {
     return `${yyyy}-${MM}-${dd}`;
 }
 
-export default ExpenseForm;
+export default TransactionEditor;
