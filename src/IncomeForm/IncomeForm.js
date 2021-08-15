@@ -49,6 +49,7 @@ const IncomeForm = ({onAddOrUpdate, data}) => {
         setShow(false);
     }
 
+    const isValid = () => title.length > 0 && amount > 0;
     const isDirty = () => !data || data.id !== id || data.title !== title || data.amount !== amount || data.date !== date || data.recurrenceRate !== recurrenceRate;
 
     return (
@@ -83,7 +84,7 @@ const IncomeForm = ({onAddOrUpdate, data}) => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" disabled={!isDirty()} onClick={ onSave }>Save</Button>
+                    <Button variant="primary" disabled={!isValid() && isDirty()} onClick={ onSave }>Save</Button>
                     <Button variant="secondary" onClick={ onClose }>Close</Button>
                 </Modal.Footer>
             </Modal>

@@ -124,7 +124,7 @@ const BudgetMaker = () => {
                 <h1>Budget Maker</h1>                
                 <div>
                     <IncomeForm onAddOrUpdate={onAddOrUpdateIncome} />
-                    <ExpenseForm />
+                    <ExpenseForm onAddOrUpdate={onAddOrUpdateIncome} />
                 </div>
             </div>
             <div className="row">
