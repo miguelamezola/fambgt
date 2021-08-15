@@ -1,0 +1,43 @@
+{
+    "budgetPeriod": {
+        "origin": "Fri May 7 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
+        "recurrenceRate": "2 weeks"
+    },
+    "transactions": [
+        {
+            "id": "a2446ac3-23a3-4cec-a712-2fb65cab3f60",
+            "type": "income",
+            "title": "Acme Co.",
+            "amount": 3000.00,
+            "date": "Fri Aug 13 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
+            "recurrenceRate": "2 weeks"
+        },
+        {
+            "id": "02661caa-756d-48ff-b5af-bb871b522afc",
+            "type": "expense",
+            "title": "Rent",
+            "amount": 2000.00,
+            "date": "Wed Sep 01 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
+            "recurrenceRate": "1 months",
+            "billingDate": "Fri Sep 1 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
+            "dueDate": "Sun Sep 3 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
+            "payments": []
+        },
+        {
+            "id": "77e8d44b-3cd0-4431-b11c-3292ba1924fd",
+            "type": "expense",
+            "title": "Car Payment",
+            "amount": 500.00,
+            "date": "Fri Aug 13 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
+            "recurrenceRate": "1 months",
+            "billingDate": "Sun Jul 25 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
+            "dueDate": "Tue Aug 24 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
+            "payments": [
+                {
+                    "date": "2021-07-25",
+                    "amount": 500.00
+                } 
+            ]
+        }
+    ]
+}
