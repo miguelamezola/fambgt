@@ -1,8 +1,4 @@
 {
-    "budgetPeriod": {
-        "origin": "Fri May 7 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
-        "recurrenceRate": "2 weeks"
-    },
     "transactions": [
         {
             "id": "a2446ac3-23a3-4cec-a712-2fb65cab3f60",

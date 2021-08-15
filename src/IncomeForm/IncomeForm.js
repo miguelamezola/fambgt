@@ -49,6 +49,14 @@ const IncomeForm = ({onAddOrUpdate, data}) => {
         setShow(false);
     }
 
+    const onAmountChanged = (event) => {
+        if (event.target.value) {
+            setAmount(parseFloat(event.target.value));
+        } else {
+            setAmount('');
+        }
+    }
+
     const isValid = () => title.length > 0 && amount > 0;
     const isDirty = () => !data || data.id !== id || data.title !== title || data.amount !== amount || data.date !== date || data.recurrenceRate !== recurrenceRate;
 
@@ -67,7 +75,7 @@ const IncomeForm = ({onAddOrUpdate, data}) => {
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Amount</Form.Label>
-                            <Form.Control name="amount" type="number" min={0} step="0.01" placeholder="Income Amount" value={ amount } onChange={(event) => setAmount(event.target.value)} />
+                            <Form.Control name="amount" type="number" min={0} step="0.01" placeholder="Income Amount" value={ amount } onChange={onAmountChanged} />
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Date</Form.Label>
