@@ -86,10 +86,10 @@ const TransactionEditor = ({dateRange, transaction}) => {
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Amount</Form.Label>
-                            <Form.Control name="amount" type="number" min={0.01} step="0.01" placeholder="Income Amount" value={ amount } onChange={onAmountChanged} />
+                            <Form.Control name="amount" type="number" min={0.01} step="0.01" placeholder="Enter Dollar Amount Here" value={ amount } onChange={onAmountChanged} />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Payment Date</Form.Label>
+                            <Form.Label>Date</Form.Label>
                             <Form.Control name="date" type="date" min={getDateString(dateRange.start)} max={getDateString(dateRange.end)} value={getDateString(date)} onChange={(event) => setDate(new Date(`${event.target.value}T07:00:00.000Z`)) } />
                         </Form.Group>
                         <Form.Group>
