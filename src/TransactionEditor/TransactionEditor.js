@@ -3,6 +3,12 @@ import { Modal, Button, Form } from "react-bootstrap";
 
 import { v4 as uuidv4 } from 'uuid';
 
+const recurrenceRates = {
+    NONE: "None",
+    SEMI_MONTHLY: "2 weeks",
+    MONTHLY: "1 month"
+}
+
 const TransactionEditor = ({transaction}) => {
     const TRANSACTION_TYPE = "expense";
     const [show,setShow] = useState(false);
@@ -11,9 +17,10 @@ const TransactionEditor = ({transaction}) => {
 
     const [id,setId] = useState("");
     const [title,setTitle] = useState("");
+    const [type,setType] = useState("expense");
     const [amount,setAmount] = useState(0.00);
     const [date,setDate] = useState(DEFAULT_DATE);
-    const [recurrenceRate,setRecurrenceRate] = useState("None");
+    const [recurrenceRate,setRecurrenceRate] = useState(recurrenceRates.NONE);
     // const [billingDate,setBillingDate] = useState(DEFAULT_DATE);
     // const [dueDate,setDueDate] = useState(DEFAULT_DATE);
 
@@ -88,9 +95,9 @@ const TransactionEditor = ({transaction}) => {
                         <Form.Group>
                             <Form.Label>Recurrence Rate</Form.Label>
                             <Form.Select name="recurrenceRate" value={recurrenceRate} onChange={(event) => setRecurrenceRate(event.target.value)}>
-                                <option>None</option>                                
-                                <option>2 weeks</option>
-                                <option>1 month</option>
+                                <option>{recurrenceRates.NONE}</option>
+                                <option>{recurrenceRates.SEMI_MONTHLY}</option>
+                                <option>{recurrenceRates.MONTHLY}</option>
                             </Form.Select>
                         </Form.Group>
                     </Form>
