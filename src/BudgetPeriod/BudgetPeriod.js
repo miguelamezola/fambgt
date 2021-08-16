@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { getDateString } from '../utils';
 import './BudgetPeriod.css';
 
-const BudgetPeriod = ({data}) => {
+export const BudgetPeriod = ({data}) => {
     const WEEK_LEN_IN_DAYS = 7;
 
     const [transactions,setTransactions] = useState([]);
@@ -93,9 +94,3 @@ const BudgetPeriod = ({data}) => {
         </div>
     );
 }
-
-const getDateString = (date) => {
-    return date ? date.toISOString().split('T')[0] : 'Unknown';
-}
-
-export default BudgetPeriod;

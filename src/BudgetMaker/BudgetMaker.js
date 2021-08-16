@@ -1,11 +1,11 @@
 import './BudgetMaker.css';
 import React, { useEffect, useState } from 'react';
-import BudgetPeriod from '../BudgetPeriod/BudgetPeriod';
-import TransactionEditor from '../TransactionEditor/TransactionEditor';
+import { BudgetPeriod } from '../BudgetPeriod/BudgetPeriod';
+import { TransactionEditor } from '../TransactionEditor/TransactionEditor';
 
 import { v4 as uuidv4 } from 'uuid';
 
-const BudgetMaker = () => {
+export const BudgetMaker = () => {
     const LEN_BUDGET_PERIOD_IN_DAYS = 14;
 
     const [dateRange,setDateRange] = useState({});
@@ -89,5 +89,3 @@ const BudgetMaker = () => {
         </div>
     );
 }
-
-export default BudgetMaker;

@@ -1,39 +1,33 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 
+import { recurrenceRates,transactionTypes,getDateString } from '../utils';
 import { v4 as uuidv4 } from 'uuid';
 
-const recurrenceRates = {
-    NONE: "None",
-    SEMI_MONTHLY: "2 weeks",
-    MONTHLY: "1 month"
-}
-
-const TransactionEditor = ({dateRange, transaction}) => {
-    const TRANSACTION_TYPE = "expense";
+export const TransactionEditor = ({dateRange, transaction}) => {
     const [show,setShow] = useState(false);
 
     const DEFAULT_DATE = new Date();
 
     const [id,setId] = useState("");
     const [title,setTitle] = useState("");
-    const [type,setType] = useState("expense");
+    const [type,setType] = useState(transactionTypes.EXPENSE);
     const [amount,setAmount] = useState(0.00);
     const [date,setDate] = useState(DEFAULT_DATE);
     const [recurrenceRate,setRecurrenceRate] = useState(recurrenceRates.NONE);
-    // const [billingDate,setBillingDate] = useState(DEFAULT_DATE);
-    // const [dueDate,setDueDate] = useState(DEFAULT_DATE);
 
     const onOpen = () => {
         if (transaction) {
             setId(transaction.id);
             setTitle(transaction.title);
+            setType(transaction.type);
             setAmount(transaction.amount);
             setDate(transaction.date);
             setRecurrenceRate(transaction.recurrenceRate);
         } else {
             setTitle('');
             setAmount('');
+            setType(transactionTypes.EXPENSE);
             setDate(new Date());
             setRecurrenceRate("None");
         }
@@ -49,14 +43,6 @@ const TransactionEditor = ({dateRange, transaction}) => {
             uuid = uuidv4();
             setId(uuid);
         }
-        // onAddOrUpdate({
-        //     id: uuid,
-        //     type: TRANSACTION_TYPE,
-        //     title: title,
-        //     amount: amount,
-        //     date: date,
-        //     recurrenceRate: recurrenceRate
-        // });
         setShow(false);
     }
 
@@ -81,12 +67,19 @@ const TransactionEditor = ({dateRange, transaction}) => {
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-3">
+                            <Form.Label>Type</Form.Label>
+                            <Form.Select name="type" value={type} onChange={(event) => setType(event.target.value)}>
+                                <option>{transactionTypes.INCOME}</option>
+                                <option>{transactionTypes.EXPENSE}</option>
+                            </Form.Select>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
                             <Form.Label>Title</Form.Label>
                             <Form.Control name="title" placeholder="Enter Title Here" value={ title } onChange={(event) => setTitle(event.target.value)} />
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Amount</Form.Label>
-                            <Form.Control name="amount" type="number" min={0.01} step="0.01" placeholder="Enter Dollar Amount Here" value={ amount } onChange={onAmountChanged} />
+                            <Form.Control name="amount" type="number" min={0} step="0.01" placeholder="Enter Dollar Amount Here" value={ amount } onChange={onAmountChanged} />
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Date</Form.Label>
@@ -110,21 +103,3 @@ const TransactionEditor = ({dateRange, transaction}) => {
         </>
     );
 }
-
-const getDateString = (date) => {
-    const yyyy = date.getFullYear();
-
-    let MM = `${date.getMonth() + 1}`;
-    if (MM.length < 2) {
-        MM = '0' + MM;
-    }
-
-    let dd = `${date.getDate()}`;
-    if (dd.length < 2) {
-        dd = '0' + dd;
-    }
-
-    return `${yyyy}-${MM}-${dd}`;
-}
-
-export default TransactionEditor;

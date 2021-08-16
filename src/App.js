@@ -1,6 +1,6 @@
 // import logo from './logo.svg';
 import './App.css';
-import BudgetMaker from './BudgetMaker/BudgetMaker';
+import { BudgetMaker } from './BudgetMaker/BudgetMaker';
 
 function App() {
   return (
