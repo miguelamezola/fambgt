@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-
-import { recurrenceRates,transactionTypes,getDateString } from '../utils';
 import { v4 as uuidv4 } from 'uuid';
+import { recurrenceRates,transactionTypes,getDateString } from '../utils';
 
 export const TransactionEditor = ({dateRange, transaction}) => {
     const [show,setShow] = useState(false);

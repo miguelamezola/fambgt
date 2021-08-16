@@ -1,6 +1,6 @@
+import './BudgetPeriod.css';
 import React, { useEffect, useState } from 'react';
 import { getDateString } from '../utils';
-import './BudgetPeriod.css';
 
 export const BudgetPeriod = ({data}) => {
     const WEEK_LEN_IN_DAYS = 7;
