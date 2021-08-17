@@ -3,13 +3,13 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid';
 import { recurrenceRates,transactionTypes,getDateString } from '../utils';
 
-export const TransactionEditor = ({dateRange, transaction}) => {
+export const TransactionEditor = ({dateRange,transaction,onAddOrUpdate}) => {
     const [show,setShow] = useState(false);
 
     const DEFAULT_DATE = new Date();
 
-    const [id,setId] = useState("");
-    const [title,setTitle] = useState("");
+    const [id,setId] = useState('');
+    const [title,setTitle] = useState('');
     const [type,setType] = useState(transactionTypes.EXPENSE);
     const [amount,setAmount] = useState(0.00);
     const [date,setDate] = useState(DEFAULT_DATE);
@@ -24,6 +24,7 @@ export const TransactionEditor = ({dateRange, transaction}) => {
             setDate(transaction.date);
             setRecurrenceRate(transaction.recurrenceRate);
         } else {
+            setId('');
             setTitle('');
             setAmount('');
             setType(transactionTypes.EXPENSE);
@@ -42,6 +43,14 @@ export const TransactionEditor = ({dateRange, transaction}) => {
             uuid = uuidv4();
             setId(uuid);
         }
+        onAddOrUpdate({
+            id: uuid,
+            title: title,
+            amount: amount,
+            type: type,
+            date: date,
+            recurrenceRate: recurrenceRate
+        });
         setShow(false);
     }
 

@@ -1,7 +1,7 @@
 export const recurrenceRates = {
     NONE: "None",
-    SEMI_MONTHLY: "2 weeks",
-    MONTHLY: "1 month"
+    SEMI_MONTHLY: "Every 2 weeks",
+    MONTHLY: "Monthly"
 }
 
 export const transactionTypes = {

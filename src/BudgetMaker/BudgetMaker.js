@@ -3,14 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { BudgetPeriod } from '../BudgetPeriod/BudgetPeriod';
 import { TransactionEditor } from '../TransactionEditor/TransactionEditor';
+import { recurrenceRates } from '../utils';
 
 export const BudgetMaker = () => {
-    const LEN_BUDGET_PERIOD_IN_DAYS = 14;
+    const TWO_WEEKS_IN_DAYS = 14;
 
     const [dateRange,setDateRange] = useState({});
     const [budgetPeriods,setBudgetPeriods] = useState([]);
 
     useEffect(() => {
+        console.log('BudgetMaker');
         fetch('data-1.json', {
             headers: {
                 'Content-Type': 'application/json',
@@ -26,31 +28,33 @@ export const BudgetMaker = () => {
             let secondStart = new Date(json.budgetPeriod.origin);
             secondStart.setHours(0,0,0,0);
             while (secondStart < Date.now()) {
-                secondStart.setDate(secondStart.getDate() + LEN_BUDGET_PERIOD_IN_DAYS);
+                secondStart.setDate(secondStart.getDate() + TWO_WEEKS_IN_DAYS);
             }
 
             let secondEnd = new Date();
             secondEnd.setHours(0,0,0,0);
-            secondEnd.setDate(secondStart.getDate() + (LEN_BUDGET_PERIOD_IN_DAYS - 1));
+            secondEnd.setDate(secondStart.getDate() + (TWO_WEEKS_IN_DAYS - 1));
 
             periods.push({
                 id: uuidv4(),                
                 start: secondStart,
-                end: secondEnd
+                end: secondEnd,
+                transactions: filterTransactions(json.transactions, secondStart, secondEnd)
             });
 
             let firstStart = new Date();
             firstStart.setHours(0,0,0,0);
-            firstStart.setDate(secondStart.getDate() - LEN_BUDGET_PERIOD_IN_DAYS);
+            firstStart.setDate(secondStart.getDate() - TWO_WEEKS_IN_DAYS);
 
             let firstEnd = new Date();
             firstEnd.setHours(0,0,0,0);
-            firstEnd.setDate(firstStart.getDate() + (LEN_BUDGET_PERIOD_IN_DAYS - 1))
+            firstEnd.setDate(firstStart.getDate() + (TWO_WEEKS_IN_DAYS - 1))
 
             periods.push({
                 id: uuidv4(),
                 start: firstStart,
-                end: firstEnd
+                end: firstEnd,
+                transactions: filterTransactions(json.transactions, firstStart, firstEnd)
             });
 
             periods.sort((a,b) => {
@@ -74,16 +78,63 @@ export const BudgetMaker = () => {
         });
     },[]);
 
+    const filterTransactions = (transactions, start, end) => {
+        return transactions.filter(t => {
+            let res = null;
+
+            let date = new Date(t.date);
+            date.setHours(0,0,0,0);
+
+            switch (t.recurrenceRate) {
+                case recurrenceRates.SEMI_MONTHLY:
+                    while(date <= end) {
+                        date.setDate(date.getDate() + TWO_WEEKS_IN_DAYS);
+                    }
+                    date.setDate(date.getDate() - TWO_WEEKS_IN_DAYS);
+                    break;
+                case recurrenceRates.MONTHLY:
+                    while(date <= end) {
+                        date.setMonth(date.getMonth() + 1);
+                    }
+                    date.setMonth(date.getMonth() - 1);
+                    break;
+            }
+
+            if (start <= date && date <= end) {
+                res = {
+                    id: t.id,
+                    date: date,
+                    title: t.title,
+                    amount: t.amount,
+                    type: t.type
+                };
+            }
+
+            return res;
+        })
+    }
+
+    const onAddOrUpdate = (transaction) => {
+        let modifiedBudgetPeriods = [];
+        budgetPeriods.forEach(bp => {
+            if (bp.start <= transaction.date && transaction.date <= bp.end) {
+                bp.transactions.push(transaction);
+            }
+            modifiedBudgetPeriods.push(bp);
+        });
+        setBudgetPeriods(modifiedBudgetPeriods);
+    }
+
     return (
         <div className="container">
             <div className="row budget-maker-header">
                 <h1>Budget Maker</h1>                
                 <div>
-                    <TransactionEditor dateRange={dateRange} />
+                    <TransactionEditor dateRange={dateRange} onAddOrUpdate={onAddOrUpdate} />
                 </div>
             </div>
             <div className="row">
-                {budgetPeriods.map(period => (<BudgetPeriod key={period.id} data={period} />))}
+                {budgetPeriods && budgetPeriods.map(period => (<BudgetPeriod key={period.id} start={period.start} end={period.end} transactions={period.transactions} />))}
             </div>
         </div>
     );
