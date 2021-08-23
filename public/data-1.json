@@ -9,7 +9,7 @@
             "type": "Income",
             "title": "Acme Co.",
             "amount": 3000.00,
-            "date": "Fri Aug 13 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
+            "date": "Fri Jul 02 2021 00:00:00 GMT-0700 (Pacific Daylight Time)",
             "recurrenceRate": "Every 2 weeks"
         },
         {

@@ -79,39 +79,35 @@ export const BudgetMaker = () => {
     },[]);
 
     const filterTransactions = (transactions, start, end) => {
-        return transactions.filter(t => {
-            let res = null;
-
+        let filtered_transactions = []
+        transactions.forEach((t) => {
             let date = new Date(t.date);
             date.setHours(0,0,0,0);
 
             switch (t.recurrenceRate) {
                 case recurrenceRates.SEMI_MONTHLY:
-                    while(date <= end) {
+                    while(date < start) {
                         date.setDate(date.getDate() + TWO_WEEKS_IN_DAYS);
                     }
-                    date.setDate(date.getDate() - TWO_WEEKS_IN_DAYS);
                     break;
                 case recurrenceRates.MONTHLY:
-                    while(date <= end) {
+                    while(date < start) {
                         date.setMonth(date.getMonth() + 1);
                     }
-                    date.setMonth(date.getMonth() - 1);
                     break;
             }
 
             if (start <= date && date <= end) {
-                res = {
+                filtered_transactions.push({
                     id: t.id,
                     date: date,
                     title: t.title,
                     amount: t.amount,
                     type: t.type
-                };
+                })
             }
-
-            return res;
-        })
+        });
+        return filtered_transactions;
     }
 
     const onAddOrUpdate = (transaction) => {

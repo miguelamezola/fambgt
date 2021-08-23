@@ -23,7 +23,7 @@ export const BudgetPeriod = ({start,end,transactions}) => {
                         return res;
                     }).map(t => (
                         <tr key={ t.id }>
-                            <th scope="row">{ `${(new Date(t.date)).getMonth()}/${(new Date(t.date)).getDate()}` }</th>
+                            <th scope="row">{ `${(new Date(t.date)).getMonth() + 1}/${(new Date(t.date)).getDate()}` }</th>
                             <td>{ t.title }</td>
                             <td className="text-end">{ t.amount.toFixed(2) }</td>
                         </tr>
