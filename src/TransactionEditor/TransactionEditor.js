@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid';
-import { recurrenceRates,transactionTypes,getDateString } from '../utils';
+import { recurrenceRates,transactionTypes,getDateString, modifyActions } from '../utils';
 
-export const TransactionEditor = ({dateRange,transaction,onAddOrUpdate}) => {
+export const TransactionEditor = ({onModify, minimized, dateRange, transaction}) => {
     const [show,setShow] = useState(false);
 
     const DEFAULT_DATE = new Date();
@@ -13,7 +13,7 @@ export const TransactionEditor = ({dateRange,transaction,onAddOrUpdate}) => {
     const [type,setType] = useState(transactionTypes.EXPENSE);
     const [amount,setAmount] = useState(0.00);
     const [date,setDate] = useState(DEFAULT_DATE);
-    const [recurrenceRate,setRecurrenceRate] = useState(recurrenceRates.NONE);
+    const [recurrenceRate,setRecurrenceRate] = useState(transaction ? transaction.recurrenceRate : recurrenceRates.NONE);
 
     const onOpen = () => {
         if (transaction) {
@@ -28,7 +28,7 @@ export const TransactionEditor = ({dateRange,transaction,onAddOrUpdate}) => {
             setTitle('');
             setAmount('');
             setType(transactionTypes.EXPENSE);
-            setDate(new Date());
+            setDate(DEFAULT_DATE);
             setRecurrenceRate("None");
         }
         setShow(true);
@@ -43,13 +43,26 @@ export const TransactionEditor = ({dateRange,transaction,onAddOrUpdate}) => {
             uuid = uuidv4();
             setId(uuid);
         }
-        onAddOrUpdate({
-            id: uuid,
-            title: title,
-            amount: amount,
-            type: type,
-            date: date,
-            recurrenceRate: recurrenceRate
+        onModify({
+            action: modifyActions.addOrUpdate,
+            transaction: {
+                id: uuid,
+                title: title,
+                amount: amount,
+                type: type,
+                date: date,
+                recurrenceRate: recurrenceRate
+            }
+        });
+        setShow(false);
+    }
+
+    const onDelete = () => {
+        onModify({
+            action: modifyActions.delete,
+            transaction: {
+                id: id
+            }
         });
         setShow(false);
     }
@@ -67,7 +80,15 @@ export const TransactionEditor = ({dateRange,transaction,onAddOrUpdate}) => {
 
     return (
         <>
-            <button type="button" className="btn btn-primary btn-sm" onClick={ onOpen }>Add Transaction</button>
+            {minimized ?
+                <svg onClick={ onOpen } xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+                : 
+                <button  onClick={ onOpen } type="button" className="btn btn-primary btn-sm">Add Transaction</button>
+            }
+
             <Modal show={ show } onHide={ onClose } centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Transaction</Modal.Title>
@@ -105,6 +126,7 @@ export const TransactionEditor = ({dateRange,transaction,onAddOrUpdate}) => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" disabled={!isValid() && isDirty()} onClick={ onSave }>Save</Button>
+                    {transaction && <Button variant="danger" onClick={ onDelete }>Delete</Button>}
                     <Button variant="secondary" onClick={ onClose }>Close</Button>
                 </Modal.Footer>
             </Modal>

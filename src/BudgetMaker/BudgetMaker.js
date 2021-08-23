@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { BudgetPeriod } from '../BudgetPeriod/BudgetPeriod';
 import { TransactionEditor } from '../TransactionEditor/TransactionEditor';
-import { recurrenceRates } from '../utils';
+import { recurrenceRates, modifyActions } from '../utils';
 
 export const BudgetMaker = () => {
     const TWO_WEEKS_IN_DAYS = 14;
@@ -110,14 +110,37 @@ export const BudgetMaker = () => {
         return filtered_transactions;
     }
 
-    const onAddOrUpdate = (transaction) => {
+    const onModify = (modification) => {
         let modifiedBudgetPeriods = [];
-        budgetPeriods.forEach(bp => {
-            if (bp.start <= transaction.date && transaction.date <= bp.end) {
-                bp.transactions.push(transaction);
-            }
-            modifiedBudgetPeriods.push(bp);
-        });
+        switch (modification.action) {
+            case modifyActions.addOrUpdate:
+                budgetPeriods.forEach(bp => {
+                    if (bp.start <= modification.transaction.date && modification.transaction.date <= bp.end) {
+                        let existingTransaction = bp.transactions.find(t => t.id === modification.transaction.id)
+                        if (existingTransaction) {
+                            for (const [key, value] of Object.entries(modification.transaction)) {
+                                existingTransaction[key] = value;
+                            }
+                        } else {
+                            bp.transactions.push(modification.transaction);
+                        }
+                    }
+                    modifiedBudgetPeriods.push(bp);
+                });
+                break;
+
+            case modifyActions.delete:
+                budgetPeriods.forEach(bp => {
+                    for (let i = 0; i < bp.transactions.length; i++) {
+                        if (bp.transactions[i].id === modification.transaction.id) {
+                            bp.transactions.splice(i, 1);
+                        }
+                    }
+                    modifiedBudgetPeriods.push(bp);
+                });
+                break;
+        }
+
         setBudgetPeriods(modifiedBudgetPeriods);
     }
 
@@ -126,11 +149,11 @@ export const BudgetMaker = () => {
             <div className="row budget-maker-header">
                 <h1>Budget Maker</h1>                
                 <div>
-                    <TransactionEditor dateRange={dateRange} onAddOrUpdate={onAddOrUpdate} />
+                    <TransactionEditor onModify={onModify} dateRange={dateRange} />
                 </div>
             </div>
             <div className="row">
-                {budgetPeriods && budgetPeriods.map(period => (<BudgetPeriod key={period.id} start={period.start} end={period.end} transactions={period.transactions} />))}
+                {budgetPeriods && budgetPeriods.map(period => (<BudgetPeriod key={period.id} onModify={onModify} start={period.start} end={period.end} transactions={period.transactions} />))}
             </div>
         </div>
     );

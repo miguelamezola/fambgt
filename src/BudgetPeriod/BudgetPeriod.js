@@ -1,8 +1,13 @@
 import './BudgetPeriod.css';
 import { Table } from "react-bootstrap";
 import { getDateString } from '../utils';
+import { TransactionEditor } from '../TransactionEditor/TransactionEditor';
 
-export const BudgetPeriod = ({start,end,transactions}) => {
+export const BudgetPeriod = ({start,end,transactions,onModify}) => {
+    const range = {
+        start: start,
+        end: end
+    }
     return (
         <div className="col-md-6 budget-period">
             <p>{getDateString(start)} to {getDateString(end)}</p>
@@ -13,6 +18,7 @@ export const BudgetPeriod = ({start,end,transactions}) => {
                         <th scope="col">Date</th>
                         <th scope="col">Title</th>
                         <th className="text-end" scope="col">Amount</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,6 +32,7 @@ export const BudgetPeriod = ({start,end,transactions}) => {
                             <th scope="row">{ `${(new Date(t.date)).getMonth() + 1}/${(new Date(t.date)).getDate()}` }</th>
                             <td>{ t.title }</td>
                             <td className="text-end">{ t.amount.toFixed(2) }</td>
+                            <td><TransactionEditor onModify={onModify} minimized={true} dateRange={range} transaction={t} /></td>
                         </tr>
                     ))}
                 </tbody>

@@ -28,3 +28,8 @@ export const getDateString = (date) => {
     }
     return result;
 }
+
+export const modifyActions = {
+    addOrUpdate: "addOrUpdate",
+    delete: "delete"
+}
