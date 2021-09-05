@@ -4,7 +4,7 @@ import { Modal, Button } from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid';
 import { BudgetPeriod } from '../BudgetPeriod/BudgetPeriod';
 import { TransactionEditor } from '../TransactionEditor/TransactionEditor';
-import { recurrenceRates, modifyActions } from '../utils';
+import { recurrenceRates, modifyActions, getDateString } from '../utils';
 
 export const BudgetMaker = () => {
     const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -149,20 +149,20 @@ export const BudgetMaker = () => {
     }
 
     const onExport = () => {
-        const title = `Family Budget - ${dateRange.start.toLocaleDateString()} to ${dateRange.end.toLocaleDateString()}`;
+        const title = `Family Budget - ${getDateString(dateRange.start)} to ${getDateString(dateRange.end)}`;
         let contents = [
             `# ${title}\n`,
             '\n',
-            `Start:\t${dateRange.start.toLocaleDateString()}\n`,
-            `End:\t${dateRange.end.toLocaleDateString()}\n`,
+            `Start:\t${getDateString(dateRange.start)}\n`,
+            `End:\t${getDateString(dateRange.end)}\n`,
             '\n'
         ];
 
         budgetPeriods.forEach((period, idx) => {
-            const title = `## Budget Period ${idx + 1} (${period.start.toLocaleDateString()} to ${period.end.toLocaleDateString()})\n`;
+            const title = `## Budget Period ${idx + 1} (${getDateString(period.start)} to ${getDateString(period.end)})\n`;
             contents.push(title);
             period.transactions.forEach(t => {
-                const transaction = `${t.date.toLocaleDateString()}\t${t.type}\t${t.title}\t$${t.amount}\n`;
+                const transaction = `${getDateString(t.date)}\t${t.type}\t${t.title}\t$${t.amount}\n`;
                 contents.push(transaction);
             });
             contents.push('\n');
