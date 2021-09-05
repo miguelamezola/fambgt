@@ -6,8 +6,8 @@ import { TransactionEditor } from '../TransactionEditor/TransactionEditor';
 import { recurrenceRates, modifyActions } from '../utils';
 
 export const BudgetMaker = () => {
-    const TWO_WEEKS_IN_DAYS = 14;
-
+    const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;    
+    const TWO_WEEKS_IN_MS = ONE_DAY_IN_MS * 14;
     const [dateRange,setDateRange] = useState({});
     const [budgetPeriods,setBudgetPeriods] = useState([]);
 
@@ -23,58 +23,39 @@ export const BudgetMaker = () => {
             return response.json();
         })
         .then((json) => {
-            let periods = [];
-
+            // compute start and end dates for the first and second budget periods
             let secondStart = new Date(json.budgetPeriod.origin);
-            secondStart.setHours(0,0,0,0);
             while (secondStart < Date.now()) {
-                secondStart.setDate(secondStart.getDate() + TWO_WEEKS_IN_DAYS);
+                secondStart = new Date(secondStart.getTime() + TWO_WEEKS_IN_MS)
             }
+            let secondEnd = new Date(secondStart.getTime() + TWO_WEEKS_IN_MS - ONE_DAY_IN_MS);
+            let firstStart = new Date(secondStart.getTime() - TWO_WEEKS_IN_MS);
+            let firstEnd = new Date(secondStart.getTime() - ONE_DAY_IN_MS);
 
-            let secondEnd = new Date();
-            secondEnd.setHours(0,0,0,0);
-            secondEnd.setDate(secondStart.getDate() + (TWO_WEEKS_IN_DAYS - 1));
-
-            periods.push({
-                id: uuidv4(),                
-                start: secondStart,
-                end: secondEnd,
-                transactions: filterTransactions(json.transactions, secondStart, secondEnd)
-            });
-
-            let firstStart = new Date();
+            // adjust the time of date
             firstStart.setHours(0,0,0,0);
-            firstStart.setDate(secondStart.getDate() - TWO_WEEKS_IN_DAYS);
-
-            let firstEnd = new Date();
             firstEnd.setHours(0,0,0,0);
-            firstEnd.setDate(firstStart.getDate() + (TWO_WEEKS_IN_DAYS - 1))
-
-            periods.push({
-                id: uuidv4(),
-                start: firstStart,
-                end: firstEnd,
-                transactions: filterTransactions(json.transactions, firstStart, firstEnd)
-            });
-
-            periods.sort((a,b) => {
-                let result = 0;
-                if (a.start < b.start) {
-                    result = -1;
-                } else if (a.start > b.start) {
-                    result = 1;
+            secondStart.setHours(0,0,0,0);
+            secondEnd.setHours(0,0,0,0);
+            
+            // add budget periods
+            setBudgetPeriods([{
+                    id: uuidv4(),
+                    start: firstStart,
+                    end: firstEnd,
+                    transactions: filterTransactions(json.transactions, firstStart, firstEnd)
+                },{
+                    id: uuidv4(),                
+                    start: secondStart,
+                    end: secondEnd,
+                    transactions: filterTransactions(json.transactions, secondStart, secondEnd)
                 }
-                return result;
-            });
-
-            setBudgetPeriods(periods);
-
-            const range = {
+            ]);
+            // date range containing all budget periods
+            setDateRange({
                 start: firstStart,
                 end: secondEnd
-            }
-
-            setDateRange(range);
+            });
         });
     },[]);
 
@@ -87,7 +68,7 @@ export const BudgetMaker = () => {
             switch (t.recurrenceRate) {
                 case recurrenceRates.SEMI_MONTHLY:
                     while(date < start) {
-                        date.setDate(date.getDate() + TWO_WEEKS_IN_DAYS);
+                        date = new Date(date.getTime() + TWO_WEEKS_IN_MS);
                     }
                     break;
                 case recurrenceRates.MONTHLY:
