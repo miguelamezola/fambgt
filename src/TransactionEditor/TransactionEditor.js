@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid';
-import { recurrenceRates,transactionTypes,getDateString, modifyActions } from '../utils';
+import { recurrenceRates,transactionTypes,getDateString, modifyActions, addMonths } from '../utils';
 
 export const TransactionEditor = ({onModify, minimized, dateRange, transaction}) => {
     const [show,setShow] = useState(false);
@@ -14,6 +14,7 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
     const [amount,setAmount] = useState(0.00);
     const [date,setDate] = useState(DEFAULT_DATE);
     const [recurrenceRate,setRecurrenceRate] = useState(transaction ? transaction.recurrenceRate : recurrenceRates.NONE);
+    const [recurrenceEndDate,setRecurrenceEndDate] = useState(DEFAULT_DATE);
     const [confirmDelete,setConfirmDelete] = useState(false);
 
     const onOpen = () => {
@@ -23,7 +24,8 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
             setType(transaction.type);
             setAmount(transaction.amount);
             setDate(transaction.date);
-            setRecurrenceRate(transaction.recurrenceRate);
+            setRecurrenceRate(transaction.recurrence.rate);
+            setRecurrenceEndDate(transaction.recurrence.endDate);
         } else {
             setId('');
             setTitle('');
@@ -31,6 +33,7 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
             setType(transactionTypes.EXPENSE);
             setDate(DEFAULT_DATE);
             setRecurrenceRate("None");
+            setRecurrenceEndDate(addMonths(new Date(), 3))
         }
         setShow(true);
     }
@@ -52,7 +55,10 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
                 amount: amount,
                 type: type,
                 date: date,
-                recurrenceRate: recurrenceRate
+                recurrence: {
+                    rate: recurrenceRate,
+                    endDate: recurrenceEndDate
+                }
             }
         });
         setShow(false);
@@ -135,6 +141,14 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
                                 <option>{recurrenceRates.MONTHLY}</option>
                             </Form.Select>
                         </Form.Group>
+                        {
+                            recurrenceRate !== recurrenceRates.NONE ?
+                            <Form.Group className="mb-3">
+                                <Form.Label>Recurrence End Date</Form.Label>
+                                <Form.Control name="recurrenceEndDate" type="date" min={getDateString(dateRange.end)} value={getDateString(recurrenceEndDate)} onChange={(event) => setRecurrenceEndDate(new Date(`${event.target.value}T07:00:00.000Z`)) } />
+                            </Form.Group> :
+                            null
+                        }
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>

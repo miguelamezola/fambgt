@@ -10,7 +10,7 @@ export const transactionTypes = {
 }
 
 export const getDateString = (date) => {
-    let result = '';    
+    let result = '';
     if(date) {
         const yyyy = date.getFullYear();
 
@@ -18,12 +18,12 @@ export const getDateString = (date) => {
         if (MM.length < 2) {
             MM = '0' + MM;
         }
-    
+
         let dd = `${date.getDate()}`;
         if (dd.length < 2) {
             dd = '0' + dd;
         }
-    
+
         result = `${yyyy}-${MM}-${dd}`;
     }
     return result;
@@ -32,4 +32,13 @@ export const getDateString = (date) => {
 export const modifyActions = {
     addOrUpdate: "addOrUpdate",
     delete: "delete"
+}
+
+export const addMonths = (date, numMonths) => {
+    const d = date.getDate();
+    date.setMonth(date.getMonth() + numMonths);
+    if (date.getDate() !== d) {
+        date.setDate(0);
+    }
+    return date;
 }

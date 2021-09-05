@@ -32,6 +32,8 @@ export const BudgetMaker = () => {
                             date.setMonth(date.getMonth() + 1);
                         }
                         break;
+                    default:
+                        break;
                 }
 
                 if (start <= date && date <= end) {
@@ -112,7 +114,6 @@ export const BudgetMaker = () => {
                 });
                 setBudgetPeriods(modifiedBudgetPeriods);
                 break;
-
             case modifyActions.delete:
                 if (modification.validate === undefined || modification.validate) {
                     setSelectedTransaction(modification.transaction.id);
@@ -120,6 +121,9 @@ export const BudgetMaker = () => {
                 } else {
                     removeBudgetPeriod(modification.transaction.id);
                 }
+                break;
+            default:
+                console.log(`Unknown modification action: ${modification.action}`);
                 break;
         }
     }
