@@ -148,6 +148,35 @@ export const BudgetMaker = () => {
         setSelectedTransaction(null);
     }
 
+    const onExport = () => {
+        const title = `Family Budget - ${dateRange.start.toLocaleDateString()} to ${dateRange.end.toLocaleDateString()}`;
+        let contents = [
+            `# ${title}\n`,
+            '\n',
+            `Start:\t${dateRange.start.toLocaleDateString()}\n`,
+            `End:\t${dateRange.end.toLocaleDateString()}\n`,
+            '\n'
+        ];
+
+        budgetPeriods.forEach((period, idx) => {
+            const title = `## Budget Period ${idx + 1} (${period.start.toLocaleDateString()} to ${period.end.toLocaleDateString()})\n`;
+            contents.push(title);
+            period.transactions.forEach(t => {
+                const transaction = `${t.date.toLocaleDateString()}\t${t.type}\t${t.title}\t$${t.amount}\n`;
+                contents.push(transaction);
+            });
+            contents.push('\n');
+            contents.push('\n');
+        });
+
+        const blob = new Blob(contents, {type:"text/plain"})
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `${title}.md`;
+        link.href = url;
+        link.click();
+    }
+
     return (
         <>
             <div className="container">
@@ -155,6 +184,7 @@ export const BudgetMaker = () => {
                     <h1>Budget Maker</h1>
                     <div>
                         <TransactionEditor onModify={onModify} dateRange={dateRange} />
+                        <Button onClick={ onExport } variant="secondary" size="sm">Export</Button>
                     </div>
                 </div>
                 <div className="row">
