@@ -21,7 +21,7 @@ export const BudgetMaker = () => {
                 let date = new Date(t.date);
                 date.setHours(0,0,0,0);
 
-                switch (t.recurrenceRate) {
+                switch (t.recurrence.rate) {
                     case recurrenceRates.SEMI_MONTHLY:
                         while(date < start) {
                             date = new Date(date.getTime() + TWO_WEEKS_IN_MS);
@@ -35,21 +35,22 @@ export const BudgetMaker = () => {
                     default:
                         break;
                 }
-
+                t.recurrence.endDate = new Date(t.recurrence.endDate);
                 if (start <= date && date <= end) {
                     filtered_transactions.push({
                         id: t.id,
                         date: date,
                         title: t.title,
                         amount: t.amount,
-                        type: t.type
+                        type: t.type,
+                        recurrence: t.recurrence
                     })
                 }
             });
             return filtered_transactions;
         }
 
-        fetch('data-1.json', {
+        fetch('data.json', {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
@@ -96,6 +97,7 @@ export const BudgetMaker = () => {
     },[TWO_WEEKS_IN_MS, ONE_DAY_IN_MS]);
 
     const onModify = (modification) => {
+        console.log(modification);
         switch (modification.action) {
             case modifyActions.addOrUpdate:
                 let modifiedBudgetPeriods = [];

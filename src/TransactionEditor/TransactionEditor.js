@@ -8,32 +8,30 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
 
     const DEFAULT_DATE = new Date();
 
-    const [id,setId] = useState('');
+    const [transactionId,setTransactionId] = useState('');
     const [title,setTitle] = useState('');
     const [type,setType] = useState(transactionTypes.EXPENSE);
     const [amount,setAmount] = useState(0.00);
     const [date,setDate] = useState(DEFAULT_DATE);
     const [recurrenceRate,setRecurrenceRate] = useState(transaction ? transaction.recurrenceRate : recurrenceRates.NONE);
-    const [recurrenceEndDate,setRecurrenceEndDate] = useState(DEFAULT_DATE);
+    const [recurrenceEndDate,setRecurrenceEndDate] = useState();
+    const [recurrenceSeriesId,setRecurrenceSeriesId] = useState();
     const [confirmDelete,setConfirmDelete] = useState(false);
 
     const onOpen = () => {
         if (transaction) {
-            setId(transaction.id);
+            setTransactionId(transaction.id);
             setTitle(transaction.title);
             setType(transaction.type);
             setAmount(transaction.amount);
             setDate(transaction.date);
+            setRecurrenceSeriesId(transaction.recurrence.id);
             setRecurrenceRate(transaction.recurrence.rate);
             setRecurrenceEndDate(transaction.recurrence.endDate);
         } else {
-            setId('');
-            setTitle('');
-            setAmount('');
             setType(transactionTypes.EXPENSE);
             setDate(DEFAULT_DATE);
             setRecurrenceRate("None");
-            setRecurrenceEndDate(addMonths(new Date(), 3))
         }
         setShow(true);
     }
@@ -42,20 +40,29 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
     }
 
     const onSave = () => {
-        let uuid = id;
-        if(!uuid) {
-            uuid = uuidv4();
-            setId(uuid);
+        let id = transactionId;
+        if (!id) {
+            id = uuidv4();
+            setTransactionId(id);
+        }
+        let seriesId = recurrenceSeriesId;
+        if (recurrenceRate !== recurrenceRates.NONE) {
+            if (!seriesId) {
+                seriesId = uuidv4();
+                setRecurrenceSeriesId(seriesId);
+            }
+            setRecurrenceEndDate(addMonths(new Date(), 3));
         }
         onModify({
             action: modifyActions.addOrUpdate,
             transaction: {
-                id: uuid,
+                id: id,
                 title: title,
                 amount: amount,
                 type: type,
                 date: date,
                 recurrence: {
+                    id: seriesId,
                     rate: recurrenceRate,
                     endDate: recurrenceEndDate
                 }
@@ -68,7 +75,7 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
         onModify({
             action: modifyActions.delete,
             transaction: {
-                id: id
+                id: transactionId
             },
             validate: false
         });
@@ -94,8 +101,18 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
         }
     }
 
+    const onRecurrenceRateChanged = (e) => {
+        setRecurrenceRate(e.target.value)
+        if (e.target.value === recurrenceRates.NONE) {
+            setRecurrenceSeriesId(undefined);
+            setRecurrenceEndDate(undefined);
+        } else {
+            setRecurrenceEndDate(addMonths(new Date(), 3));
+        }
+    }
+
     const isValid = () => title.length > 0 && amount > 0;
-    const isDirty = () => !transaction || transaction.id !== id || transaction.title !== title || transaction.amount !== amount || transaction.date !== date || transaction.recurrenceRate !== recurrenceRate;
+    const isDirty = () => !transaction || transaction.id !== transactionId || transaction.title !== title || transaction.amount !== amount || transaction.date !== date || transaction.recurrenceRate !== recurrenceRate;
 
     return (
         <>
@@ -135,7 +152,7 @@ export const TransactionEditor = ({onModify, minimized, dateRange, transaction})
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Recurrence Rate</Form.Label>
-                            <Form.Select name="recurrenceRate" value={recurrenceRate} onChange={(event) => setRecurrenceRate(event.target.value)}>
+                            <Form.Select name="recurrenceRate" value={recurrenceRate} onChange={ onRecurrenceRateChanged }>
                                 <option>{recurrenceRates.NONE}</option>
                                 <option>{recurrenceRates.SEMI_MONTHLY}</option>
                                 <option>{recurrenceRates.MONTHLY}</option>
