@@ -1,8 +1,9 @@
 export const msalConfig = {
     auth: {
         clientId: "534e8377-df83-43b4-930f-5f632532a85e",
-        authority: "https://login.microsoftonline.com/common",
+        authority: "https://fambgt.b2clogin.com/tfp/fambgt.onmicrosoft.com/B2C_1_signup_and_signin_uflow",
         redirectUri: "http://localhost:3000",
+        knownAuthorities: ["fambgt.b2clogin.com"]
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored
@@ -12,7 +13,8 @@ export const msalConfig = {
 
 // Add scopes here for ID token to be used at Microsoft identity platform endpoints.
 export const loginRequest = {
-    scopes: ["User.Read"]
+    scopes: []
+    // scopes: ["User.Read"]
 };
 
 // Add the endpoints here for Microsoft Graph API services you'd like to use.
