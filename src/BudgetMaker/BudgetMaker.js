@@ -4,7 +4,7 @@ import { Modal, Button } from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid';
 import { BudgetPeriod } from '../BudgetPeriod/BudgetPeriod';
 import { TransactionEditor } from '../TransactionEditor/TransactionEditor';
-import { recurrenceRates, modifyActions, getDateString } from '../utils';
+import { recurrenceRates, modifyActions, getDateString, addMonths } from '../utils';
 
 export const BudgetMaker = () => {
     const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -97,23 +97,54 @@ export const BudgetMaker = () => {
     },[TWO_WEEKS_IN_MS, ONE_DAY_IN_MS]);
 
     const onModify = (modification) => {
-        console.log(modification);
         switch (modification.action) {
             case modifyActions.addOrUpdate:
                 let modifiedBudgetPeriods = [];
-                budgetPeriods.forEach(bp => {
-                    if (bp.start <= modification.transaction.date && modification.transaction.date <= bp.end) {
+                if (modification.transaction.recurrence.rate === recurrenceRates.NONE) {
+                    budgetPeriods.forEach(bp => {
+                        if (bp.start <= modification.transaction.date && modification.transaction.date <= bp.end) {
+                            let existingTransaction = bp.transactions.find(t => t.id === modification.transaction.id)
+                            if (existingTransaction) {
+                                for (const [key, value] of Object.entries(modification.transaction)) {
+                                    existingTransaction[key] = value;
+                                }
+                            } else {
+                                bp.transactions.push(modification.transaction);
+                            }
+                        }
+                        modifiedBudgetPeriods.push(bp);
+                    });
+                } else {
+                    budgetPeriods.forEach(bp => {
                         let existingTransaction = bp.transactions.find(t => t.id === modification.transaction.id)
                         if (existingTransaction) {
                             for (const [key, value] of Object.entries(modification.transaction)) {
                                 existingTransaction[key] = value;
                             }
                         } else {
-                            bp.transactions.push(modification.transaction);
+                            const endDate = modification.transaction.recurrence.endDate;
+                            let date = modification.transaction.date;
+                            while (date < endDate) {
+                                let transaction = JSON.parse(JSON.stringify(modification.transaction));
+                                transaction.id = uuidv4();
+                                transaction.date = date;
+                                if (bp.start < transaction.date && transaction.date < bp.end) {
+                                    bp.transactions.push(transaction);
+                                }
+                                switch (modification.transaction.recurrence.rate) {
+                                    case recurrenceRates.SEMI_MONTHLY:
+                                        date = new Date(date.getTime() + TWO_WEEKS_IN_MS);
+                                        break;
+                                    case recurrenceRates.MONTHLY:
+                                    default:
+                                        date = addMonths(date, 1);
+                                        break;
+                                }
+                            }
                         }
-                    }
-                    modifiedBudgetPeriods.push(bp);
-                });
+                        modifiedBudgetPeriods.push(bp);
+                    });
+                }
                 setBudgetPeriods(modifiedBudgetPeriods);
                 break;
             case modifyActions.delete:

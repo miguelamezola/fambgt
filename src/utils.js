@@ -9,8 +9,9 @@ export const transactionTypes = {
     INCOME: "Income"
 }
 
-export const getDateString = (date) => {
+export const getDateString = (dateParam) => {
     let result = '';
+    const date = new Date(dateParam);
     if(date) {
         const yyyy = date.getFullYear();
 
