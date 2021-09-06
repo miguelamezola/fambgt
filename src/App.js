@@ -1,7 +1,7 @@
 // import logo from './logo.svg';
 import './App.css';
-import { PageLayout } from './PageLayout/PageLayout';
-import { BudgetMaker } from './BudgetMaker/BudgetMaker';
+import { PageLayout } from './components/PageLayout/PageLayout';
+import { BudgetMaker } from './components/BudgetMaker/BudgetMaker';
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 
 function App() {

@@ -1,6 +1,6 @@
 import './BudgetPeriod.css';
 import { Table } from "react-bootstrap";
-import { getDateString, modifyActions } from '../utils';
+import { getDateString, modifyActions } from '../../utils';
 import { TransactionEditor } from '../TransactionEditor/TransactionEditor';
 
 export const BudgetPeriod = ({start,end,transactions,onModify}) => {

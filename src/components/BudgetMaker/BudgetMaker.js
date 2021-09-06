@@ -4,7 +4,7 @@ import { Modal, Button } from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid';
 import { BudgetPeriod } from '../BudgetPeriod/BudgetPeriod';
 import { TransactionEditor } from '../TransactionEditor/TransactionEditor';
-import { recurrenceRates, modifyActions, getDateString, addMonths } from '../utils';
+import { recurrenceRates, modifyActions, getDateString, addMonths } from '../../utils';
 
 export const BudgetMaker = () => {
     const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
